@@ -48,18 +48,38 @@ const baseball = getRandomPhraseAsArray(phrases);
 addPhraseToDisplay(baseball);
 
 
-// check if a letter is in the phrase
-function checkLetter (button) {
-    const checkLetter = document.querySelectorAll('.letter');
-    var match = null;
-    for (let i = 0; i < checkLetter.length; i++) {
-        if ( button === checkLetter[i].textContent) {
-            checkLetter[i].classList.add('show');
-            match = checkLetter[i].textContent;
+// listen for the onscreen keyboard to be clicked
+qwerty.addEventListener('click', (e) => {
+    if (e.target.tagName === 'BUTTON') {
+        // check if a letter is in the phrase
+        function checkLetter (arr) {
+            e.target.classList.add('chosen');
+            const checkLetter = document.querySelectorAll('.letter');
+            var match = null;
+            for (let i = 0; i < checkLetter.length; i++) {
+                if ( arr === checkLetter[i].textContent) {
+                checkLetter[i].classList.add('show');
+                match = arr;
+                }
+            }
+            return match;
         }
     }
-    return match;
-}
+
+    if (e.target.className === 'chosen') {
+        e.target.disabled = true;
+    }
+
+    let letterFound = checkLetter(e.target.textContent);
+
+    if (letterFound === null) {
+        const lives = document.querySelectorAll('.tries img');
+        lives[missed].src = 'images/lostHeart.png';
+        missed++;
+    }
+
+    checkWin();
+});
 
 // check if the game has been won or lost
 function checkWin () {
@@ -83,36 +103,13 @@ function checkWin () {
 }
 
 
-
-
-// listen for the onscreen keyboard to be clicked
-qwerty.addEventListener('click', (e) => {
-    if (e.target.tagName === 'BUTTON') {
-        e.target.classList.add('chosen');
-
-        if (e.target.className === 'chosen') {
-            e.target.disabled = true;
-        }
-    }
-
-    let letterFound = checkLetter(e.target.textContent);
-
-    if (letterFound === null) {
-        const lives = document.querySelectorAll('.tries img');
-        lives[missed].src = 'images/lostHeart.png';
-        missed++;
-    }
-
-    checkWin();
-});
-
 function reset() {
     startGame.addEventListener('click', () => {
         missed = 0;
         overlay.className = 'start';
 
         let phrase = document.querySelector('ul');
-        phrase.textContent = '';
+        phrase.innerHTML = '';
 
         let hearts = document.querySelectorAll('.tries img');
         for(i = 0; i < hearts.length; i++) {
